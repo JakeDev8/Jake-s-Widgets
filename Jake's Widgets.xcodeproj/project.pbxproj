@@ -30,33 +30,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BBB7B6522E31F79900D5ABAA /* Exceptions for "Jake's WidgetsTests" folder in "Jake's Widgets" target */ = {
+		BBB7B6572E3203A300D5ABAA /* Exceptions for "Jake's Widgets" folder in "Jake's Widgets" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				HomeView.swift,
-				Jake_s_WidgetsApp.swift,
-				MainTabView.swift,
-				PersistenceManager.swift,
-				PreviewView.swift,
-				ProfileView.swift,
-				SearchView.swift,
-				UserViewCreator.swift,
-				ViewManager.swift,
+				Jake_s_WidgetsTests.swift,
 			);
 			target = BBB7B5EC2E2C68B900D5ABAA /* Jake's Widgets */;
 		};
-		BBB7B6532E31F79900D5ABAA /* Exceptions for "Jake's WidgetsTests" folder in "Jake's WidgetsTests" target */ = {
+		BBB7B6582E3203A300D5ABAA /* Exceptions for "Jake's Widgets" folder in "Jake's WidgetsTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				HomeView.swift,
-				Jake_s_WidgetsApp.swift,
-				MainTabView.swift,
-				PersistenceManager.swift,
-				PreviewView.swift,
-				ProfileView.swift,
-				SearchView.swift,
-				UserViewCreator.swift,
-				ViewManager.swift,
+				Jake_s_WidgetsTests.swift,
 			);
 			target = BBB7B5FA2E2C68BB00D5ABAA /* Jake's WidgetsTests */;
 		};
@@ -65,15 +49,15 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		BBB7B5EF2E2C68B900D5ABAA /* Jake's Widgets */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BBB7B6572E3203A300D5ABAA /* Exceptions for "Jake's Widgets" folder in "Jake's Widgets" target */,
+				BBB7B6582E3203A300D5ABAA /* Exceptions for "Jake's Widgets" folder in "Jake's WidgetsTests" target */,
+			);
 			path = "Jake's Widgets";
 			sourceTree = "<group>";
 		};
 		BBB7B5FE2E2C68BB00D5ABAA /* Jake's WidgetsTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				BBB7B6522E31F79900D5ABAA /* Exceptions for "Jake's WidgetsTests" folder in "Jake's Widgets" target */,
-				BBB7B6532E31F79900D5ABAA /* Exceptions for "Jake's WidgetsTests" folder in "Jake's WidgetsTests" target */,
-			);
 			path = "Jake's WidgetsTests";
 			sourceTree = "<group>";
 		};
