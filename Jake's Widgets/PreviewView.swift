@@ -7,42 +7,21 @@
 
 import SwiftUI
 
-// Widget View Configuration Data Structure
-struct WidgetView: Identifiable
-{
-    let id = UUID()
-    var name: String
-    var leftWidget: Widget?
-    var rightWidget: Widget?
-}
-
 struct PreviewView: View
 {
-    @State private var widgetViews: [WidgetView] = []
-    @State private var currentViewIndex = 0
-    @State private var isDarkMode = false
+    @ObservedObject var viewManager: ViewManager
+    @Binding var currentViewIndex: Int
+    @Binding var isDarkMode: Bool
+    
     @State private var distanceScale: Double = 1.0
     @State private var isSelectingLeft = true
-    @State private var orientation = UIDeviceOrientation.unknown
     @State private var showingAddView = false
     @State private var newViewName = ""
     
-    // Use same mock data as HomeView for now
-    let availableWidgets = [
-        Widget(name: "Minimal Clock", category: "Time", backgroundColor: .black, iconName: "clock.fill", description: "Clean time display", isNew: false),
-        Widget(name: "Weather Now", category: "Weather", backgroundColor: .blue, iconName: "cloud.sun.fill", description: "Current conditions", isNew: false),
-        Widget(name: "Next Event", category: "Calendar", backgroundColor: .purple, iconName: "calendar", description: "Upcoming events", isNew: true),
-        Widget(name: "Photo Frame", category: "Photos", backgroundColor: .orange, iconName: "photo.fill", description: "Rotating photos", isNew: false),
-        Widget(name: "Workout Timer", category: "Fitness", backgroundColor: .green, iconName: "figure.run", description: "Exercise tracking", isNew: false),
-        Widget(name: "Daily Quote", category: "Lifestyle", backgroundColor: .pink, iconName: "quote.bubble.fill", description: "Inspiration daily", isNew: true),
-        Widget(name: "Focus Mode", category: "Productivity", backgroundColor: .teal, iconName: "brain.head.profile", description: "Distraction-free", isNew: true),
-        Widget(name: "Sleep Sounds", category: "Health", backgroundColor: .mint, iconName: "moon.zzz.fill", description: "Relaxing audio", isNew: false)
-    ]
-    
     var currentView: WidgetView?
     {
-        guard !widgetViews.isEmpty && currentViewIndex < widgetViews.count else { return nil }
-        return widgetViews[currentViewIndex]
+        guard !viewManager.widgetViews.isEmpty && currentViewIndex < viewManager.widgetViews.count else { return nil }
+        return viewManager.widgetViews[currentViewIndex]
     }
     
     var body: some View
@@ -73,14 +52,14 @@ struct PreviewView: View
                             }
                         }
                         
-                        if !widgetViews.isEmpty
+                        if !viewManager.widgetViews.isEmpty
                         {
                             // View Selection Carousel
                             ScrollView(.horizontal, showsIndicators: false)
                             {
                                 HStack(spacing: 12)
                                 {
-                                    ForEach(Array(widgetViews.enumerated()), id: \.element.id) { index, view in
+                                    ForEach(Array(viewManager.widgetViews.enumerated()), id: \.element.id) { index, view in
                                         ViewCard(
                                             view: view,
                                             isSelected: index == currentViewIndex
@@ -220,7 +199,7 @@ struct PreviewView: View
                             
                             VStack(spacing: 2)
                             {
-                                Text("Rotate your phone to enter fullscreen")
+                                Text("Rotate for fullscreen preview")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                 
@@ -276,10 +255,10 @@ struct PreviewView: View
                                 Button(action: {
                                     if isSelectingLeft
                                     {
-                                        widgetViews[currentViewIndex].leftWidget = nil
+                                        viewManager.widgetViews[currentViewIndex].leftWidget = nil
                                     } else
                                     {
-                                        widgetViews[currentViewIndex].rightWidget = nil
+                                        viewManager.widgetViews[currentViewIndex].rightWidget = nil
                                     }
                                 })
                                 {
@@ -301,14 +280,14 @@ struct PreviewView: View
                                 }
                                 
                                 // Available widgets
-                                ForEach(availableWidgets) { widget in
+                                ForEach(viewManager.availableWidgets) { widget in
                                     Button(action: {
                                         if isSelectingLeft
                                         {
-                                            widgetViews[currentViewIndex].leftWidget = widget
+                                            viewManager.widgetViews[currentViewIndex].leftWidget = widget
                                         } else
                                         {
-                                            widgetViews[currentViewIndex].rightWidget = widget
+                                            viewManager.widgetViews[currentViewIndex].rightWidget = widget
                                         }
                                     })
                                     {
@@ -330,46 +309,14 @@ struct PreviewView: View
             .navigationTitle("Preview")
             .navigationBarTitleDisplayMode(.inline)
         }
-        .fullScreenCover(isPresented: .constant(orientation.isLandscape && !widgetViews.isEmpty))
-        {
-            FullScreenPreviewView(
-                widgetViews: widgetViews,
-                initialIndex: currentViewIndex,
-                isDarkMode: isDarkMode
-            ) { newIndex in
-                currentViewIndex = newIndex
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-            orientation = UIDevice.current.orientation
-        }
         .sheet(isPresented: $showingAddView)
         {
             AddViewSheet(newViewName: $newViewName)
             {
-                let newView = WidgetView(name: newViewName.isEmpty ? "View \(widgetViews.count + 1)" : newViewName)
-                widgetViews.append(newView)
-                currentViewIndex = widgetViews.count - 1
+                let newView = WidgetView(name: newViewName.isEmpty ? "View \(viewManager.widgetViews.count + 1)" : newViewName)
+                viewManager.addView(newView)
+                currentViewIndex = viewManager.widgetViews.count - 1
                 newViewName = ""
-            }
-        }
-        .onAppear
-        {
-            // Create default views if none exist
-            if widgetViews.isEmpty
-            {
-                widgetViews = [
-                    WidgetView(
-                        name: "Bedtime",
-                        leftWidget: availableWidgets.first { $0.name == "Minimal Clock" },
-                        rightWidget: availableWidgets.first { $0.name == "Sleep Sounds" }
-                    ),
-                    WidgetView(
-                        name: "Morning",
-                        leftWidget: availableWidgets.first { $0.name == "Weather Now" },
-                        rightWidget: availableWidgets.first { $0.name == "Next Event" }
-                    )
-                ]
             }
         }
     }
@@ -521,7 +468,8 @@ struct FullScreenPreviewView: View
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .onChange(of: currentIndex) { newIndex in
+            .onChange(of: currentIndex)
+            { _, newIndex in
                 onIndexChange(newIndex)
             }
             

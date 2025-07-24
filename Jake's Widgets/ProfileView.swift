@@ -1,11 +1,20 @@
 //
-//  MyWidgets.swift
+//  ProfileView.swift
 //  Jake's Widgets
 //
 //  Created by Jake Huebner on 7/22/25.
 //
 
 import SwiftUI
+
+// Widget View Configuration Data Structure
+struct WidgetView: Identifiable
+{
+    let id = UUID()
+    var name: String
+    var leftWidget: Widget?
+    var rightWidget: Widget?
+}
 
 // Shared data model for managing widget views across the app
 class ViewManager: ObservableObject
@@ -74,10 +83,7 @@ class ViewManager: ObservableObject
 
 struct ProfileView: View
 {
-    @StateObject private var viewManager = ViewManager()
-    @State private var showingEditView = false
-    @State private var editingIndex: Int?
-    @State private var newName = ""
+    @ObservedObject var viewManager: ViewManager
     
     var body: some View
     {
@@ -126,17 +132,11 @@ struct ProfileView: View
                     ], spacing: 16)
                     {
                         ForEach(Array(viewManager.widgetViews.enumerated()), id: \.element.id) { index, view in
-                            ProfileViewCard(
-                                view: view,
-                                onEdit: {
-                                    editingIndex = index
-                                    newName = view.name
-                                    showingEditView = true
-                                },
-                                onDelete: {
-                                    viewManager.deleteView(at: index)
-                                }
-                            )
+                            NavigationLink(destination: UserViewCreator(viewManager: viewManager, viewIndex: index))
+                            {
+                                ProfileViewCard(view: view)
+                            }
+                            .buttonStyle(PlainButtonStyle()) // Prevents default button styling
                         }
                     }
                     .padding(.horizontal, 20)
@@ -183,28 +183,12 @@ struct ProfileView: View
             .navigationBarTitleDisplayMode(.large)
             .navigationBarHidden(true)
         }
-        .sheet(isPresented: $showingEditView)
-        {
-            EditViewSheet(
-                currentName: newName,
-                onSave: { updatedName in
-                    if let index = editingIndex
-                    {
-                        viewManager.renameView(at: index, newName: updatedName)
-                    }
-                }
-            )
-        }
     }
 }
 
 struct ProfileViewCard: View
 {
     let view: WidgetView
-    let onEdit: () -> Void
-    let onDelete: () -> Void
-    
-    @State private var showingActionSheet = false
     
     var body: some View
     {
@@ -277,34 +261,10 @@ struct ProfileViewCard: View
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            
-            // Action Button
-            Button(action: {
-                showingActionSheet = true
-            })
-            {
-                Image(systemName: "ellipsis")
-                    .foregroundColor(.secondary)
-                    .font(.title3)
-            }
         }
         .padding(16)
         .background(Color(.systemGray6))
         .clipShape(RoundedRectangle(cornerRadius: 16))
-        .confirmationDialog("Edit View", isPresented: $showingActionSheet, titleVisibility: .visible)
-        {
-            Button("Rename")
-            {
-                onEdit()
-            }
-            
-            Button("Delete", role: .destructive)
-            {
-                onDelete()
-            }
-            
-            Button("Cancel", role: .cancel) { }
-        }
     }
     
     private func getWidgetCount(for view: WidgetView) -> Int

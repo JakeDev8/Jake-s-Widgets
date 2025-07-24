@@ -10,112 +10,93 @@ import SwiftUI
 struct MainTabView: View
 {
     @State private var selectedTab = 0
+    @StateObject private var viewManager = ViewManager()
+    
+    // Universal fullscreen preview states
+    @State private var orientation = UIDeviceOrientation.unknown
+    @State private var currentViewIndex = 0
+    @State private var isDarkMode = false
     
     var body: some View
     {
         TabView(selection: $selectedTab)
         {
-            HomeView()
+            HomeView(viewManager: viewManager)
                 .tabItem
-                {
-                    Image(systemName: selectedTab == 0 ? "house.fill" : "house")
-                    Text("Home")
-                }
-                .tag(0)
+            {
+                Image(systemName: selectedTab == 0 ? "house.fill" : "house")
+                Text("Home")
+            }
+            .tag(0)
             
             SearchView()
                 .tabItem
-                {
-                    Image(systemName: "magnifyingglass")
-                    Text("Search")
-                }
-                .tag(1)
+            {
+                Image(systemName: "magnifyingglass")
+                Text("Search")
+            }
+            .tag(1)
             
             CreateView()
                 .tabItem
-                {
-                    Image(systemName: selectedTab == 2 ? "plus.square.fill" : "plus.square")
-                    Text("Create")
-                }
-                .tag(2)
+            {
+                Image(systemName: selectedTab == 2 ? "plus.square.fill" : "plus.square")
+                Text("Create")
+            }
+            .tag(2)
             
-            PreviewView()
+            PreviewView(
+                viewManager: viewManager,
+                currentViewIndex: $currentViewIndex,
+                isDarkMode: $isDarkMode
+            )
                 .tabItem
-                {
-                    Image(systemName: selectedTab == 3 ? "iphone.landscape" : "iphone.landscape")
-                    Text("Preview")
-                }
-                .tag(3)
+            {
+                Image(systemName: selectedTab == 3 ? "iphone.landscape" : "iphone.landscape")
+                Text("Preview")
+            }
+            .tag(3)
             
-            ProfileView()
+            ProfileView(viewManager: viewManager)
                 .tabItem
-                {
-                    Image(systemName: selectedTab == 4 ? "person.circle.fill" : "person.circle")
-                    Text("Profile")
-                }
-                .tag(4)
+            {
+                Image(systemName: selectedTab == 4 ? "person.circle.fill" : "person.circle")
+                Text("Profile")
+            }
+            .tag(4)
         }
         .accentColor(.primary)
-    }
-}
-
-// You'll need to create these individual views
-//struct HomeView: View
-//{
-//    var body: some View
-//    {
-//        NavigationView
-//        {
-//            Text("Home")
-//                .navigationTitle("Home")
-//        }
-//    }
-//}
-
-struct SearchView: View
-{
-    var body: some View
-    {
-        NavigationView
+        .environmentObject(viewManager) // Provide ViewManager to all child views
+        .fullScreenCover(isPresented: .constant(orientation.isLandscape && !viewManager.widgetViews.isEmpty))
         {
-            Text("Search")
-                .navigationTitle("Search")
+            FullScreenPreviewView(
+                widgetViews: viewManager.widgetViews,
+                initialIndex: currentViewIndex,
+                isDarkMode: isDarkMode
+            ) { newIndex in
+                currentViewIndex = newIndex
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            orientation = UIDevice.current.orientation
+        }
+        .onAppear
+        {
+            // Initialize orientation on app launch
+            orientation = UIDevice.current.orientation
         }
     }
 }
 
+// Updated placeholder views
 struct CreateView: View
 {
     var body: some View
     {
         NavigationView
         {
-            Text ("Create View")
+            Text("Create View")
                 .navigationTitle("Create")
         }
     }
 }
-
-//struct PreviewView: View
-//{
-//    var body: some View
-//    {
-//        NavigationView
-//        {
-//            Text ("Preview Mode")
-//                .navigationTitle("Activity")
-//        }
-//    }
-//}
-
-//struct ProfileView: View
-//{
-//    var body: some View
-//    {
-//        NavigationView
-//        {
-//            Text ("My Widgets")
-//                .navigationTitle("Profile")
-//        }
-//    }
-//}

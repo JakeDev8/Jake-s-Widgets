@@ -21,28 +21,28 @@ struct Widget: Identifiable
 
 struct HomeView: View
 {
-    @StateObject private var viewManager = ViewManager()
+    @ObservedObject var viewManager: ViewManager
     
     // Mock Data
     let featuredWidgets = [
-        Widget(name: "Minimal Clock", category: "Time", backgroundColor: .black, iconName: "clock.fill", description: "Clean time display", isNew: false),
-        Widget(name: "Weather Now", category: "Weather", backgroundColor: .blue, iconName: "cloud.sun.fill", description: "Current conditions", isNew: false),
-        Widget(name: "Next Event", category: "Calendar", backgroundColor: .purple, iconName: "calendar", description: "Upcoming events", isNew: true),
-        Widget(name: "Photo Frame", category: "Photos", backgroundColor: .orange, iconName: "photo.fill", description: "Rotating photos", isNew: false)
+        Widget(name: "Minimal Clock", category: "Time", backgroundColor: .black, iconName: "clock.fill", description: "Clean time display perfect for StandBy mode", isNew: false),
+        Widget(name: "Weather Now", category: "Weather", backgroundColor: .blue, iconName: "cloud.sun.fill", description: "Current weather conditions and temperature", isNew: false),
+        Widget(name: "Next Event", category: "Calendar", backgroundColor: .purple, iconName: "calendar", description: "Shows your upcoming calendar events", isNew: true),
+        Widget(name: "Photo Frame", category: "Photos", backgroundColor: .orange, iconName: "photo.fill", description: "Rotating photos from your library", isNew: false)
     ]
     
     let forYouWidgets = [
-        Widget(name: "Workout Timer", category: "Fitness", backgroundColor: .green, iconName: "figure.run", description: "Exercise tracking", isNew: false),
-        Widget(name: "Daily Quote", category: "Lifestyle", backgroundColor: .pink, iconName: "quote.bubble.fill", description: "Inspiration daily", isNew: true),
-        Widget(name: "Stock Ticker", category: "Finance", backgroundColor: .indigo, iconName: "chart.line.uptrend.xyaxis", description: "Market updates", isNew: false),
-        Widget(name: "Sleep Sounds", category: "Health", backgroundColor: .mint, iconName: "moon.zzz.fill", description: "Relaxing audio", isNew: false)
+        Widget(name: "Workout Timer", category: "Fitness", backgroundColor: .green, iconName: "figure.run", description: "Track your exercise sessions", isNew: false),
+        Widget(name: "Daily Quote", category: "Lifestyle", backgroundColor: .pink, iconName: "quote.bubble.fill", description: "Inspirational quotes to start your day", isNew: true),
+        Widget(name: "Stock Ticker", category: "Finance", backgroundColor: .indigo, iconName: "chart.line.uptrend.xyaxis", description: "Live stock market updates", isNew: false),
+        Widget(name: "Sleep Sounds", category: "Health", backgroundColor: .mint, iconName: "moon.zzz.fill", description: "Relaxing audio for better sleep", isNew: false)
     ]
     
     let recentWidgets = [
-        Widget(name: "Focus Mode", category: "Productivity", backgroundColor: .teal, iconName: "brain.head.profile", description: "Distraction-free", isNew: true),
-        Widget(name: "Pet Cam", category: "Smart Home", backgroundColor: .brown, iconName: "camera.fill", description: "Check on pets", isNew: true),
-        Widget(name: "Habit Tracker", category: "Lifestyle", backgroundColor: .red, iconName: "checkmark.circle.fill", description: "Daily habits", isNew: true),
-        Widget(name: "Crypto Watch", category: "Finance", backgroundColor: .yellow, iconName: "bitcoinsign.circle.fill", description: "Crypto prices", isNew: true)
+        Widget(name: "Focus Mode", category: "Productivity", backgroundColor: .teal, iconName: "brain.head.profile", description: "Distraction-free work environment", isNew: true),
+        Widget(name: "Pet Cam", category: "Smart Home", backgroundColor: .brown, iconName: "camera.fill", description: "Keep an eye on your pets", isNew: true),
+        Widget(name: "Habit Tracker", category: "Lifestyle", backgroundColor: .red, iconName: "checkmark.circle.fill", description: "Track your daily habits", isNew: true),
+        Widget(name: "Crypto Watch", category: "Finance", backgroundColor: .yellow, iconName: "bitcoinsign.circle.fill", description: "Monitor cryptocurrency prices", isNew: true)
     ]
     
     var body: some View
@@ -119,7 +119,11 @@ struct WidgetCarouselSection: View
                 HStack(spacing: 16)
                 {
                     ForEach(widgets) { widget in
-                        WidgetCard(widget: widget)
+                        NavigationLink(destination: WidgetDetailView(widget: widget))
+                        {
+                            WidgetCard(widget: widget)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
                 .padding(.horizontal, 4)
@@ -172,10 +176,6 @@ struct WidgetCard: View
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .frame(width: 120)
-        }
-        .onTapGesture
-        {
-            // Handle widget selection
         }
     }
 }
@@ -250,7 +250,7 @@ struct MyViewsSection: View
                 
                 Spacer()
                 
-                NavigationLink(destination: Text("Preview View")) // This will link to PreviewView
+                NavigationLink(destination: Text("Preview View - Coming Soon!")) // TODO: Link to PreviewView with proper navigation
                 {
                     Text("See More")
                         .foregroundColor(.blue)
@@ -286,8 +286,12 @@ struct MyViewsSection: View
                 {
                     HStack(spacing: 16)
                     {
-                        ForEach(viewManager.widgetViews) { view in
-                            HomeViewCard(view: view)
+                        ForEach(Array(viewManager.widgetViews.enumerated()), id: \.element.id) { index, view in
+                            NavigationLink(destination: UserViewCreator(viewManager: viewManager, viewIndex: index))
+                            {
+                                HomeViewCard(view: view)
+                            }
+                            .buttonStyle(PlainButtonStyle()) // Prevents default button styling
                         }
                     }
                     .padding(.horizontal, 4)
@@ -378,10 +382,6 @@ struct HomeViewCard: View
                     .foregroundColor(.secondary)
             }
             .frame(width: 120)
-        }
-        .onTapGesture
-        {
-            // Handle view selection - could navigate to PreviewView with this view selected
         }
     }
     
