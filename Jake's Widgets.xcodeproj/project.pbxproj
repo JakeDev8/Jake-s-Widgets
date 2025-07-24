@@ -29,6 +29,39 @@
 		BBB7B6052E2C68BB00D5ABAA /* Jake's WidgetsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Jake's WidgetsUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		BBB7B6522E31F79900D5ABAA /* Exceptions for "Jake's WidgetsTests" folder in "Jake's Widgets" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HomeView.swift,
+				Jake_s_WidgetsApp.swift,
+				MainTabView.swift,
+				PersistenceManager.swift,
+				PreviewView.swift,
+				ProfileView.swift,
+				SearchView.swift,
+				UserViewCreator.swift,
+				ViewManager.swift,
+			);
+			target = BBB7B5EC2E2C68B900D5ABAA /* Jake's Widgets */;
+		};
+		BBB7B6532E31F79900D5ABAA /* Exceptions for "Jake's WidgetsTests" folder in "Jake's WidgetsTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HomeView.swift,
+				Jake_s_WidgetsApp.swift,
+				MainTabView.swift,
+				PersistenceManager.swift,
+				PreviewView.swift,
+				ProfileView.swift,
+				SearchView.swift,
+				UserViewCreator.swift,
+				ViewManager.swift,
+			);
+			target = BBB7B5FA2E2C68BB00D5ABAA /* Jake's WidgetsTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		BBB7B5EF2E2C68B900D5ABAA /* Jake's Widgets */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -37,6 +70,10 @@
 		};
 		BBB7B5FE2E2C68BB00D5ABAA /* Jake's WidgetsTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BBB7B6522E31F79900D5ABAA /* Exceptions for "Jake's WidgetsTests" folder in "Jake's Widgets" target */,
+				BBB7B6532E31F79900D5ABAA /* Exceptions for "Jake's WidgetsTests" folder in "Jake's WidgetsTests" target */,
+			);
 			path = "Jake's WidgetsTests";
 			sourceTree = "<group>";
 		};

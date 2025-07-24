@@ -17,7 +17,7 @@ struct SearchView: View
     
     let categories = ["All", "Time", "Weather", "Calendar", "Photos", "Fitness", "Lifestyle", "Finance", "Productivity", "Health", "Smart Home"]
     
-    // Expanded widget library for search
+    // Expanded widget library for search - using updated Widget struct with WidgetColor
     let allWidgets = [
         Widget(name: "Minimal Clock", category: "Time", backgroundColor: .black, iconName: "clock.fill", description: "Clean time display perfect for StandBy mode", isNew: false),
         Widget(name: "Weather Now", category: "Weather", backgroundColor: .blue, iconName: "cloud.sun.fill", description: "Current weather conditions and temperature", isNew: false),
@@ -239,7 +239,7 @@ struct SearchWidgetCard: View
             ZStack
             {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(widget.backgroundColor.gradient)
+                    .fill(widget.backgroundColor.color.gradient)
                     .frame(height: 120)
                 
                 VStack(spacing: 6)
@@ -308,7 +308,7 @@ struct WidgetDetailView: View
                     ZStack
                     {
                         RoundedRectangle(cornerRadius: 24)
-                            .fill(widget.backgroundColor.gradient)
+                            .fill(widget.backgroundColor.color.gradient)
                             .frame(width: 200, height: 200)
                         
                         VStack(spacing: 12)
@@ -375,10 +375,10 @@ struct WidgetDetailView: View
                     
                     VStack(spacing: 8)
                     {
-                        FeatureRow(icon: "iphone.landscape", title: "StandBy Compatible", description: "Optimized for iPhone StandBy mode")
-                        FeatureRow(icon: "house.fill", title: "Home Screen", description: "Works beautifully on your home screen")
-                        FeatureRow(icon: "lock.fill", title: "Lock Screen", description: "Perfect for lock screen widgets")
-                        FeatureRow(icon: "paintbrush.fill", title: "Customizable", description: "Multiple themes and options")
+                        DetailFeatureRow(icon: "iphone.landscape", title: "StandBy Compatible", description: "Optimized for iPhone StandBy mode")
+                        DetailFeatureRow(icon: "house.fill", title: "Home Screen", description: "Works beautifully on your home screen")
+                        DetailFeatureRow(icon: "lock.fill", title: "Lock Screen", description: "Perfect for lock screen widgets")
+                        DetailFeatureRow(icon: "paintbrush.fill", title: "Customizable", description: "Multiple themes and options")
                     }
                 }
                 
@@ -463,7 +463,7 @@ struct WidgetDetailView: View
     }
 }
 
-struct FeatureRow: View
+struct DetailFeatureRow: View
 {
     let icon: String
     let title: String
@@ -562,7 +562,7 @@ struct ViewSelectorSheet: View
                         ZStack
                         {
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(widget.backgroundColor)
+                                .fill(widget.backgroundColor.color)
                                 .frame(width: 80, height: 80)
                             
                             Image(systemName: widget.iconName)
@@ -728,13 +728,7 @@ struct ViewSelectorSheet: View
         } else
         {
             // Slot is empty, add directly
-            if isLeftSlot
-            {
-                viewManager.widgetViews[viewIndex].leftWidget = widget
-            } else
-            {
-                viewManager.widgetViews[viewIndex].rightWidget = widget
-            }
+            viewManager.setWidget(widget, at: viewIndex, isLeftSlot: isLeftSlot)
             
             let viewName = viewManager.widgetViews[viewIndex].name
             let slotName = isLeftSlot ? "left" : "right"
@@ -745,13 +739,7 @@ struct ViewSelectorSheet: View
     
     private func performWidgetReplacement(config: ReplaceAlertConfig)
     {
-        if config.isLeftSlot
-        {
-            viewManager.widgetViews[config.viewIndex].leftWidget = widget
-        } else
-        {
-            viewManager.widgetViews[config.viewIndex].rightWidget = widget
-        }
+        viewManager.setWidget(widget, at: config.viewIndex, isLeftSlot: config.isLeftSlot)
         
         let viewName = viewManager.widgetViews[config.viewIndex].name
         let slotName = config.isLeftSlot ? "left" : "right"
@@ -767,13 +755,7 @@ struct ViewSelectorSheet: View
         
         // Add widget to the specified slot
         let newIndex = viewManager.widgetViews.count - 1
-        if isLeftSlot
-        {
-            viewManager.widgetViews[newIndex].leftWidget = widget
-        } else
-        {
-            viewManager.widgetViews[newIndex].rightWidget = widget
-        }
+        viewManager.setWidget(widget, at: newIndex, isLeftSlot: isLeftSlot)
         
         let slotName = isLeftSlot ? "left" : "right"
         successMessage = "Created \"\(viewName)\" and added \(widget.name) to \(slotName) slot"
@@ -862,7 +844,7 @@ struct SlotButton: View
                 ZStack
                 {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(widget?.backgroundColor ?? Color(.systemGray4))
+                        .fill(widget?.backgroundColor.color ?? Color(.systemGray4))
                         .frame(height: 80)
                     
                     if let widget = widget
@@ -935,7 +917,7 @@ struct CreateViewSheet: View
                     ZStack
                     {
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(widget.backgroundColor)
+                            .fill(widget.backgroundColor.color)
                             .frame(width: 80, height: 80)
                         
                         Image(systemName: widget.iconName)
@@ -988,7 +970,7 @@ struct CreateViewSheet: View
                                     ZStack
                                     {
                                         RoundedRectangle(cornerRadius: 12)
-                                            .fill(selectedSlot == "Left" ? widget.backgroundColor : Color(.systemGray4))
+                                            .fill(selectedSlot == "Left" ? widget.backgroundColor.color : Color(.systemGray4))
                                             .frame(width: 80, height: 60)
                                         
                                         if selectedSlot == "Left"
@@ -1023,7 +1005,7 @@ struct CreateViewSheet: View
                                     ZStack
                                     {
                                         RoundedRectangle(cornerRadius: 12)
-                                            .fill(selectedSlot == "Right" ? widget.backgroundColor : Color(.systemGray4))
+                                            .fill(selectedSlot == "Right" ? widget.backgroundColor.color : Color(.systemGray4))
                                             .frame(width: 80, height: 60)
                                         
                                         if selectedSlot == "Right"

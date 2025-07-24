@@ -7,23 +7,11 @@
 
 import SwiftUI
 
-// Mock Widget Data Structure
-struct Widget: Identifiable
-{
-    let id = UUID()
-    let name: String
-    let category: String
-    let backgroundColor: Color
-    let iconName: String
-    let description: String
-    let isNew: Bool
-}
-
 struct HomeView: View
 {
     @ObservedObject var viewManager: ViewManager
     
-    // Mock Data
+    // Mock Data - Updated to use WidgetColor enum
     let featuredWidgets = [
         Widget(name: "Minimal Clock", category: "Time", backgroundColor: .black, iconName: "clock.fill", description: "Clean time display perfect for StandBy mode", isNew: false),
         Widget(name: "Weather Now", category: "Weather", backgroundColor: .blue, iconName: "cloud.sun.fill", description: "Current weather conditions and temperature", isNew: false),
@@ -144,7 +132,7 @@ struct WidgetCard: View
             ZStack
             {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(widget.backgroundColor.gradient)
+                    .fill(widget.backgroundColor.color.gradient)
                     .frame(width: 120, height: 120)
                 
                 VStack(spacing: 4)
@@ -322,7 +310,7 @@ struct HomeViewCard: View
                     if let leftWidget = view.leftWidget
                     {
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(leftWidget.backgroundColor)
+                            .fill(leftWidget.backgroundColor.color)
                             .frame(width: 32, height: 32)
                             .overlay(
                                 Image(systemName: leftWidget.iconName)
@@ -345,7 +333,7 @@ struct HomeViewCard: View
                     if let rightWidget = view.rightWidget
                     {
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(rightWidget.backgroundColor)
+                            .fill(rightWidget.backgroundColor.color)
                             .frame(width: 32, height: 32)
                             .overlay(
                                 Image(systemName: rightWidget.iconName)

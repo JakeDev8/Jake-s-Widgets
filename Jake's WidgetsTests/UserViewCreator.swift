@@ -179,13 +179,7 @@ struct UserViewCreator: View
                             {
                                 // Clear/Empty option
                                 Button(action: {
-                                    if isSelectingLeft
-                                    {
-                                        viewManager.widgetViews[viewIndex].leftWidget = nil
-                                    } else
-                                    {
-                                        viewManager.widgetViews[viewIndex].rightWidget = nil
-                                    }
+                                    viewManager.setWidget(nil, at: viewIndex, isLeftSlot: isSelectingLeft)
                                 })
                                 {
                                     VStack(spacing: 8)
@@ -216,13 +210,7 @@ struct UserViewCreator: View
                                 // Available widgets
                                 ForEach(viewManager.availableWidgets) { widget in
                                     Button(action: {
-                                        if isSelectingLeft
-                                        {
-                                            viewManager.widgetViews[viewIndex].leftWidget = widget
-                                        } else
-                                        {
-                                            viewManager.widgetViews[viewIndex].rightWidget = widget
-                                        }
+                                        viewManager.setWidget(widget, at: viewIndex, isLeftSlot: isSelectingLeft)
                                     })
                                     {
                                         EditorWidgetCard(
@@ -307,7 +295,7 @@ struct ViewEditorPreview: View
                     ZStack
                     {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(leftWidget.backgroundColor)
+                            .fill(leftWidget.backgroundColor.color)
                             .frame(width: 90, height: 90)
                         
                         VStack(spacing: 4)
@@ -349,7 +337,7 @@ struct ViewEditorPreview: View
                     ZStack
                     {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(rightWidget.backgroundColor)
+                            .fill(rightWidget.backgroundColor.color)
                             .frame(width: 90, height: 90)
                         
                         VStack(spacing: 4)
@@ -401,7 +389,7 @@ struct EditorWidgetCard: View
             ZStack
             {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(widget.backgroundColor.gradient)
+                    .fill(widget.backgroundColor.color.gradient)
                     .frame(width: 100, height: 100)
                 
                 VStack(spacing: 4)

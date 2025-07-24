@@ -18,6 +18,8 @@ struct PreviewView: View
     @State private var showingAddView = false
     @State private var newViewName = ""
     
+    private let persistenceManager = PersistenceManager.shared
+    
     var currentView: WidgetView?
     {
         guard !viewManager.widgetViews.isEmpty && currentViewIndex < viewManager.widgetViews.count else { return nil }
@@ -253,13 +255,7 @@ struct PreviewView: View
                             {
                                 // Empty/Clear option
                                 Button(action: {
-                                    if isSelectingLeft
-                                    {
-                                        viewManager.widgetViews[currentViewIndex].leftWidget = nil
-                                    } else
-                                    {
-                                        viewManager.widgetViews[currentViewIndex].rightWidget = nil
-                                    }
+                                    viewManager.setWidget(nil, at: currentViewIndex, isLeftSlot: isSelectingLeft)
                                 })
                                 {
                                     VStack(spacing: 8)
@@ -282,13 +278,7 @@ struct PreviewView: View
                                 // Available widgets
                                 ForEach(viewManager.availableWidgets) { widget in
                                     Button(action: {
-                                        if isSelectingLeft
-                                        {
-                                            viewManager.widgetViews[currentViewIndex].leftWidget = widget
-                                        } else
-                                        {
-                                            viewManager.widgetViews[currentViewIndex].rightWidget = widget
-                                        }
+                                        viewManager.setWidget(widget, at: currentViewIndex, isLeftSlot: isSelectingLeft)
                                     })
                                     {
                                         PreviewWidgetCard(
@@ -319,6 +309,15 @@ struct PreviewView: View
                 newViewName = ""
             }
         }
+        .onAppear
+        {
+            // Load distance scale preference
+            distanceScale = persistenceManager.loadDistanceScale()
+        }
+        .onChange(of: distanceScale) { _, newScale in
+            // Save distance scale preference
+            persistenceManager.saveDistanceScale(newScale)
+        }
     }
 }
 
@@ -341,7 +340,7 @@ struct ViewCard: View
                     if let leftWidget = view.leftWidget
                     {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(leftWidget.backgroundColor)
+                            .fill(leftWidget.backgroundColor.color)
                             .frame(width: 24, height: 24)
                             .overlay(
                                 Image(systemName: leftWidget.iconName)
@@ -359,7 +358,7 @@ struct ViewCard: View
                     if let rightWidget = view.rightWidget
                     {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(rightWidget.backgroundColor)
+                            .fill(rightWidget.backgroundColor.color)
                             .frame(width: 24, height: 24)
                             .overlay(
                                 Image(systemName: rightWidget.iconName)
@@ -619,7 +618,7 @@ struct StandByWidgetDisplay: View
         ZStack
         {
             RoundedRectangle(cornerRadius: 12)
-                .fill(widget.backgroundColor.opacity(isDarkMode ? 0.8 : 1.0))
+                .fill(widget.backgroundColor.color.opacity(isDarkMode ? 0.8 : 1.0))
                 .frame(width: 120, height: 120)
             
             VStack(spacing: 6)
@@ -673,7 +672,7 @@ struct FullScreenWidgetDisplay: View
         ZStack
         {
             RoundedRectangle(cornerRadius: 24)
-                .fill(widget.backgroundColor.opacity(isDarkMode ? 0.9 : 1.0))
+                .fill(widget.backgroundColor.color.opacity(isDarkMode ? 0.9 : 1.0))
                 .frame(width: 200, height: 200)
             
             VStack(spacing: 12)
@@ -730,7 +729,7 @@ struct PreviewWidgetCard: View
             ZStack
             {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(widget.backgroundColor.gradient)
+                    .fill(widget.backgroundColor.color.gradient)
                     .frame(width: 80, height: 80)
                 
                 Image(systemName: widget.iconName)
