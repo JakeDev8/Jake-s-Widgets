@@ -2,7 +2,7 @@
 //  PreviewView.swift
 //  Jake's Widgets
 //
-//  Created by Jake Huebner on 7/22/25.
+//  UPDATED to use EnhancedWidget instead of Widget
 //
 
 import SwiftUI
@@ -340,7 +340,7 @@ struct ViewCard: View
                     if let leftWidget = view.leftWidget
                     {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(leftWidget.backgroundColor.color)
+                            .fill(leftWidget.themedBackgroundColor) // CHANGED: backgroundColor.color -> themedBackgroundColor
                             .frame(width: 24, height: 24)
                             .overlay(
                                 Image(systemName: leftWidget.iconName)
@@ -358,7 +358,7 @@ struct ViewCard: View
                     if let rightWidget = view.rightWidget
                     {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(rightWidget.backgroundColor.color)
+                            .fill(rightWidget.themedBackgroundColor) // CHANGED: backgroundColor.color -> themedBackgroundColor
                             .frame(width: 24, height: 24)
                             .overlay(
                                 Image(systemName: rightWidget.iconName)
@@ -559,8 +559,8 @@ extension UIDeviceOrientation
 
 struct StandBySimulator: View
 {
-    let leftWidget: Widget?
-    let rightWidget: Widget?
+    let leftWidget: EnhancedWidget? // CHANGED: Widget? -> EnhancedWidget?
+    let rightWidget: EnhancedWidget? // CHANGED: Widget? -> EnhancedWidget?
     let isDarkMode: Bool
     let scale: Double
     
@@ -610,7 +610,7 @@ struct StandBySimulator: View
 
 struct StandByWidgetDisplay: View
 {
-    let widget: Widget
+    let widget: EnhancedWidget // CHANGED: Widget -> EnhancedWidget
     let isDarkMode: Bool
     
     var body: some View
@@ -618,7 +618,7 @@ struct StandByWidgetDisplay: View
         ZStack
         {
             RoundedRectangle(cornerRadius: 12)
-                .fill(widget.backgroundColor.color.opacity(isDarkMode ? 0.8 : 1.0))
+                .fill(widget.themedBackgroundColor.opacity(isDarkMode ? 0.8 : 1.0)) // CHANGED: backgroundColor.color -> themedBackgroundColor
                 .frame(width: 120, height: 120)
             
             VStack(spacing: 6)
@@ -664,7 +664,7 @@ struct EmptyWidgetSlot: View
 
 struct FullScreenWidgetDisplay: View
 {
-    let widget: Widget
+    let widget: EnhancedWidget // CHANGED: Widget -> EnhancedWidget
     let isDarkMode: Bool
     
     var body: some View
@@ -672,7 +672,7 @@ struct FullScreenWidgetDisplay: View
         ZStack
         {
             RoundedRectangle(cornerRadius: 24)
-                .fill(widget.backgroundColor.color.opacity(isDarkMode ? 0.9 : 1.0))
+                .fill(widget.themedBackgroundColor.opacity(isDarkMode ? 0.9 : 1.0)) // CHANGED: backgroundColor.color -> themedBackgroundColor
                 .frame(width: 200, height: 200)
             
             VStack(spacing: 12)
@@ -719,7 +719,7 @@ struct FullScreenEmptySlot: View
 
 struct PreviewWidgetCard: View
 {
-    let widget: Widget
+    let widget: EnhancedWidget // CHANGED: Widget -> EnhancedWidget
     let isSelected: Bool
     
     var body: some View
@@ -729,7 +729,7 @@ struct PreviewWidgetCard: View
             ZStack
             {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(widget.backgroundColor.color.gradient)
+                    .fill(widget.themedBackgroundColor.gradient) // CHANGED: backgroundColor.color -> themedBackgroundColor
                     .frame(width: 80, height: 80)
                 
                 Image(systemName: widget.iconName)

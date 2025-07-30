@@ -2,7 +2,7 @@
 //  UserViewCreator.swift
 //  Jake's Widgets
 //
-//  Created by Jake Huebner on 7/23/25.
+//  UPDATED to use EnhancedWidget instead of Widget
 //
 
 import SwiftUI
@@ -295,7 +295,7 @@ struct ViewEditorPreview: View
                     ZStack
                     {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(leftWidget.backgroundColor.color)
+                            .fill(leftWidget.themedBackgroundColor) // CHANGED: backgroundColor.color -> themedBackgroundColor
                             .frame(width: 90, height: 90)
                         
                         VStack(spacing: 4)
@@ -337,7 +337,7 @@ struct ViewEditorPreview: View
                     ZStack
                     {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(rightWidget.backgroundColor.color)
+                            .fill(rightWidget.themedBackgroundColor) // CHANGED: backgroundColor.color -> themedBackgroundColor
                             .frame(width: 90, height: 90)
                         
                         VStack(spacing: 4)
@@ -379,7 +379,7 @@ struct ViewEditorPreview: View
 
 struct EditorWidgetCard: View
 {
-    let widget: Widget
+    let widget: EnhancedWidget // CHANGED: Widget -> EnhancedWidget
     let isSelected: Bool
     
     var body: some View
@@ -389,7 +389,7 @@ struct EditorWidgetCard: View
             ZStack
             {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(widget.backgroundColor.color.gradient)
+                    .fill(widget.themedBackgroundColor.gradient) // CHANGED: backgroundColor.color -> themedBackgroundColor
                     .frame(width: 100, height: 100)
                 
                 VStack(spacing: 4)
@@ -398,16 +398,31 @@ struct EditorWidgetCard: View
                         .font(.system(size: 24, weight: .medium))
                         .foregroundColor(.white)
                     
-                    if widget.isNew
+                    HStack(spacing: 2)
                     {
-                        Text("NEW")
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .padding(.horizontal, 4)
-                            .padding(.vertical, 1)
-                            .background(Color.white.opacity(0.3))
-                            .foregroundColor(.white)
-                            .clipShape(Capsule())
+                        if widget.isNew
+                        {
+                            Text("NEW")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 1)
+                                .background(Color.white.opacity(0.3))
+                                .foregroundColor(.white)
+                                .clipShape(Capsule())
+                        }
+                        
+                        if widget.isPremium // NEW: Show premium badge
+                        {
+                            Text("PRO")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 1)
+                                .background(Color.yellow.opacity(0.8))
+                                .foregroundColor(.black)
+                                .clipShape(Capsule())
+                        }
                     }
                 }
                 

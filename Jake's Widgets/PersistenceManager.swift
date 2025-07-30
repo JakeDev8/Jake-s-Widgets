@@ -2,8 +2,9 @@
 //  PersistenceManager.swift
 //  Jake's Widgets
 //
-//  Created by Jake Huebner on 7/23/25.
+//  UPDATED to use EnhancedWidget instead of Widget
 //
+
 import Foundation
 import SwiftUI
 
@@ -107,8 +108,8 @@ class PersistenceManager: ObservableObject
         return false
     }
     
-    // MARK: - Widget Usage Tracking
-    func addToRecentlyUsed(_ widget: Widget)
+    // MARK: - Widget Usage Tracking (UPDATED for EnhancedWidget)
+    func addToRecentlyUsed(_ widget: EnhancedWidget) // CHANGED: Widget -> EnhancedWidget
     {
         var recent = loadRecentlyUsedWidgets()
         
@@ -127,7 +128,7 @@ class PersistenceManager: ObservableObject
         saveRecentlyUsedWidgets(recent)
     }
     
-    private func saveRecentlyUsedWidgets(_ widgets: [Widget])
+    private func saveRecentlyUsedWidgets(_ widgets: [EnhancedWidget]) // CHANGED: Widget -> EnhancedWidget
     {
         do
         {
@@ -139,13 +140,13 @@ class PersistenceManager: ObservableObject
         }
     }
     
-    func loadRecentlyUsedWidgets() -> [Widget]
+    func loadRecentlyUsedWidgets() -> [EnhancedWidget] // CHANGED: Widget -> EnhancedWidget
     {
         guard let data = userDefaults.data(forKey: Keys.recentlyUsedWidgets) else { return [] }
         
         do
         {
-            return try JSONDecoder().decode([Widget].self, from: data)
+            return try JSONDecoder().decode([EnhancedWidget].self, from: data) // CHANGED: Widget -> EnhancedWidget
         } catch
         {
             print("❌ Failed to load recently used widgets: \(error)")
@@ -153,8 +154,8 @@ class PersistenceManager: ObservableObject
         }
     }
     
-    // MARK: - Favorites
-    func toggleFavorite(_ widget: Widget)
+    // MARK: - Favorites (UPDATED for EnhancedWidget)
+    func toggleFavorite(_ widget: EnhancedWidget) // CHANGED: Widget -> EnhancedWidget
     {
         var favorites = loadFavoriteWidgets()
         
@@ -169,12 +170,12 @@ class PersistenceManager: ObservableObject
         saveFavoriteWidgets(favorites)
     }
     
-    func isFavorite(_ widget: Widget) -> Bool
+    func isFavorite(_ widget: EnhancedWidget) -> Bool // CHANGED: Widget -> EnhancedWidget
     {
         return loadFavoriteWidgets().contains { $0.id == widget.id }
     }
     
-    private func saveFavoriteWidgets(_ widgets: [Widget])
+    private func saveFavoriteWidgets(_ widgets: [EnhancedWidget]) // CHANGED: Widget -> EnhancedWidget
     {
         do
         {
@@ -186,13 +187,13 @@ class PersistenceManager: ObservableObject
         }
     }
     
-    func loadFavoriteWidgets() -> [Widget]
+    func loadFavoriteWidgets() -> [EnhancedWidget] // CHANGED: Widget -> EnhancedWidget
     {
         guard let data = userDefaults.data(forKey: Keys.favoriteWidgets) else { return [] }
         
         do
         {
-            return try JSONDecoder().decode([Widget].self, from: data)
+            return try JSONDecoder().decode([EnhancedWidget].self, from: data) // CHANGED: Widget -> EnhancedWidget
         } catch
         {
             print("❌ Failed to load favorite widgets: \(error)")
